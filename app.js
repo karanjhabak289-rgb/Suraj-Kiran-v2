@@ -1,25 +1,39 @@
 const PRODUCTS = [
-  {id:"premium-chai", name:"Premium Chai", price:540, image:"Premium chai.PNG", desc:"A rich everyday chai with satisfying aroma and character."},
-  {id:"dhaba-chai", name:"Dhaba Chai", price:400, image:"Dhaba chai.png", desc:"A comforting, full-bodied chai inspired by classic roadside tea."},
-  {id:"green-tea", name:"Green Tea", price:null, image:"green tea.png", desc:"A clean, refreshing tea for a lighter everyday cup."},
+  {id:"premium-chai", name:"Premium Chai", price:540, image:"premium chai.PNG", desc:"A rich everyday chai with satisfying aroma and character."},
+ {id:"dhaba-chai", name:"Dhaba Chai", price:400, images:["Dhaba chai.png","Dhaba chai 2.png"], desc:"A comforting, full-bodied chai inspired by classic roadside tea."},
+  {id:"green-tea", name:"Green Tea", price:340, unit:"200g", image:"green tea.png", desc:"A clean, refreshing tea for a lighter everyday cup."},
   {id:"butterfly-pea", name:"Butterfly Pea Flower", price:900, image:"Butterfly Pea Flower Tea.png", desc:"A distinctive floral infusion with a naturally striking colour."},
   {id:"hibiscus-flower", name:"Hibiscus Flower Tea", price:500, image:"hibiscus flower tea.png", desc:"A vibrant floral infusion with a refreshing character."},
   {id:"chamomile-flower", name:"Chamomile Flower", price:900, image:"Chamomile flower tea.png", desc:"A gentle floral tea suited to calm, quiet moments."}
 ];
 
-const money = p => p == null ? "Price on enquiry" : `₹${p.toLocaleString("en-IN")}/kg`;
-
+const money = p => p.price == null
+  ? "Price on enquiry"
+  : `₹${p.price.toLocaleString("en-IN")}/${p.unit || "kg"}`;
 function card(p){
+  const images = p.images || [p.image];
+
   return `<article class="product-card">
-    <div class="product-media"><img src="${p.image}" alt="${p.name}" loading="lazy">
+    <div class="product-media">
+      <div class="product-slider">
+        ${images.map((img, i) => `
+          <img src="${img}" alt="${p.name}" loading="lazy">
+        `).join("")}
+      </div>
+
       <button class="quick-add" data-add="${p.id}" aria-label="Add ${p.name}">+</button>
     </div>
-    <div class="product-body"><span class="product-cat">SURAj KIRAN</span><h3 class="product-name">${p.name}</h3>
-      <p class="product-desc">${p.desc}</p><div class="product-meta"><span class="price">${money(p.price)}</span></div>
+
+    <div class="product-body">
+      <span class="product-cat">SURAJ KIRAN</span>
+      <h3 class="product-name">${p.name}</h3>
+      <p class="product-desc">${p.desc}</p>
+      <div class="product-meta">
+        <span class="price">${money(p)}</span>
+      </div>
     </div>
   </article>`;
 }
-
 function getCart(){ try{return JSON.parse(localStorage.getItem("surajKiranCart")||"[]")}catch{return []}}
 function saveCart(c){localStorage.setItem("surajKiranCart",JSON.stringify(c)); updateCount();}
 function updateCount(){const n=getCart().reduce((a,x)=>a+x.qty,0);document.querySelectorAll("#cartCount").forEach(e=>e.textContent=n);}
