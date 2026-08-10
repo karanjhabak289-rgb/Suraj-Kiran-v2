@@ -1,8 +1,8 @@
 const PRODUCTS = [
-  {id:"premium-chai", name:"Premium Chai", price:540, image:"Premium chai.png", desc:"A rich everyday chai with satisfying aroma and character."},
+  {id:"premium-chai", name:"Premium Chai", price:540, image:"Premium chai.PNG", desc:"A rich everyday chai with satisfying aroma and character."},
   {id:"dhaba-chai", name:"Dhaba Chai", price:400, image:"Dhaba chai.png", desc:"A comforting, full-bodied chai inspired by classic roadside tea."},
   {id:"green-tea", name:"Green Tea", price:null, image:"green tea.png", desc:"A clean, refreshing tea for a lighter everyday cup."},
-  {id:"butterfly-pea", name:"Butterfly Pea Flower", price:900, image:"Butterfly Pea flower.png", desc:"A distinctive floral infusion with a naturally striking colour."},
+  {id:"butterfly-pea", name:"Butterfly Pea Flower", price:900, image:"Butterfly Pea Flower Tea.png", desc:"A distinctive floral infusion with a naturally striking colour."},
   {id:"hibiscus-flower", name:"Hibiscus Flower Tea", price:500, image:"hibiscus flower tea.png", desc:"A vibrant floral infusion with a refreshing character."},
   {id:"chamomile-flower", name:"Chamomile Flower", price:900, image:"Chamomile flower tea.png", desc:"A gentle floral tea suited to calm, quiet moments."}
 ];
