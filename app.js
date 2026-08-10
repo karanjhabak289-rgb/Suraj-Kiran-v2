@@ -16,9 +16,9 @@ function card(p){
   return `<article class="product-card">
     <div class="product-media">
       <div class="product-slider">
-        ${images.map((img, i) => `
-          <img src="${img}" alt="${p.name}" loading="lazy">
-        `).join("")}
+        ${images.map(img => `
+  <img src="${img}" alt="${p.name}" loading="lazy">
+`).join("")}
       </div>
 
       <button class="quick-add" data-add="${p.id}" aria-label="Add ${p.name}">+</button>
