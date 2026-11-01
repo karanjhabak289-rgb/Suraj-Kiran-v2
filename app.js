@@ -1,146 +1,188 @@
 
+/* ==========================================
+   SURAJ KIRAN — WEBSITE JAVASCRIPT
+   ========================================== */
+
+const WHATSAPP_NUMBER = "919942995694";
+const CART_KEY = "surajKiranCart";
+
 const PRODUCTS = [
   {
     id: "premium-chai",
     name: "Premium Chai",
+    category: "CTC Tea",
     price: 540,
+    sizes: [250, 500, 1000],
     images: [
       "premium_chai_front.webp",
       "premium_chai_back.png"
     ],
     desc: "A rich everyday chai with satisfying aroma and character.",
-    sizes: [250, 500, 1000]
+    description:
+      "Discover the pleasure of a satisfying everyday cup with Suraj Kiran Premium Chai. Created for those who appreciate the familiar comfort of traditional Indian milk tea, this CTC tea offers a full-bodied character and an inviting tea aroma. Enjoy it as part of your morning routine, during an afternoon break, or while sharing conversations with family and friends.",
+    highlights: [
+      "Full-bodied CTC tea character",
+      "Ideal for traditional milk chai",
+      "Available in 250g, 500g and 1kg packs"
+    ]
   },
   {
     id: "dhaba-chai",
     name: "Dhaba Chai",
+    category: "CTC Tea",
     price: 449,
+    sizes: [250, 500, 1000],
     images: [
       "Dhaba chai.png",
       "Dhaba chai 2.png"
     ],
     desc: "A comforting, full-bodied chai inspired by classic roadside tea.",
-    sizes: [250, 500, 1000]
+    description:
+      "Inspired by the welcoming spirit of India's roadside tea stalls, Suraj Kiran Dhaba Chai brings a familiar, robust tea experience to your home. Its CTC character makes it well suited to traditional preparation with milk and sugar. Whether served with breakfast, snacks, or an evening conversation, it is designed for people who enjoy a strong, comforting cup of chai.",
+    highlights: [
+      "Inspired by classic Indian dhaba chai",
+      "Robust character for milk tea",
+      "Available in 250g, 500g and 1kg packs"
+    ]
   },
   {
     id: "green-tea",
     name: "Green Tea",
+    category: "Green Tea",
     price: 340,
     unit: "200g",
-    image: "green tea.png",
-    desc: "A clean, refreshing tea for a lighter everyday cup."
+    grams: 200,
+    images: ["green tea.png"],
+    desc: "A clean, refreshing tea for a lighter everyday cup.",
+    description:
+      "Enjoy a lighter tea moment with Suraj Kiran Green Tea. Prepared as a gentle infusion, green tea offers a refreshing alternative to traditional milk chai. Its simple, straightforward character makes it suitable for a quiet morning, an afternoon pause, or any time you prefer a cup without milk. Brew with hot water and adjust the strength to your personal preference.",
+    highlights: [
+      "A refreshing alternative to milk chai",
+      "Best enjoyed as a water-based infusion",
+      "Available in a 200g pack"
+    ]
   },
   {
     id: "butterfly-pea",
     name: "Butterfly Pea Flower",
+    category: "Floral Infusion",
     price: 399,
     unit: "100g",
-    image: "Butterfly Pea Flower Tea.png",
-    desc: "A distinctive floral infusion with a naturally striking colour."
+    grams: 100,
+    images: ["Butterfly Pea Flower Tea.png"],
+    desc: "A distinctive floral infusion with a naturally striking colour.",
+    description:
+      "Bring a beautiful touch of colour to your tea ritual with Suraj Kiran Butterfly Pea Flower. Known for producing a naturally vivid blue infusion, butterfly pea flowers create an eye-catching drink with a delicate botanical character. Enjoy the infusion warm or chilled. Adding lemon can change its colour towards purple, making it an especially interesting drink to prepare and serve.",
+    highlights: [
+      "Naturally vibrant blue floral infusion",
+      "Enjoy hot or cold",
+      "Available in a 100g pack"
+    ]
   },
   {
     id: "hibiscus-flower",
     name: "Hibiscus Flower Tea",
+    category: "Floral Infusion",
     price: 399,
     unit: "100g",
-    image: "hibiscus flower tea.png",
-    desc: "A vibrant floral infusion with a refreshing character."
+    grams: 100,
+    images: ["hibiscus flower tea.png"],
+    desc: "A vibrant floral infusion with a refreshing character.",
+    description:
+      "Suraj Kiran Hibiscus Flower Tea brings colour and a distinctive floral experience to your cup. Hibiscus is known for creating a deep reddish infusion with a pleasantly tart character. It can be enjoyed warm on a quiet day or chilled as a refreshing drink. Adjust the brewing time and sweetness to suit your taste.",
+    highlights: [
+      "Distinctive tart and floral character",
+      "Naturally colourful infusion",
+      "Available in a 100g pack"
+    ]
   },
   {
     id: "chamomile-flower",
     name: "Chamomile Flower",
+    category: "Floral Infusion",
     price: 399,
     unit: "100g",
-    image: "Chamomile flower tea.png",
-    desc: "A gentle floral tea suited to calm, quiet moments."
+    grams: 100,
+    images: ["Chamomile flower tea.png"],
+    desc: "A gentle floral tea suited to calm, quiet moments.",
+    description:
+      "Make room for a peaceful tea moment with Suraj Kiran Chamomile Flower. Chamomile is appreciated for its gentle floral aroma and delicate infusion. Enjoy it without milk to experience its naturally soft botanical character. It is a lovely choice for a quiet evening, a reading break, or whenever you want to enjoy a simple floral beverage.",
+    highlights: [
+      "Delicate floral aroma",
+      "A gentle, caffeine-free floral infusion",
+      "Available in a 100g pack"
+    ]
   }
 ];
 
-const WHATSAPP_NUMBER = "919942995694";
-const CART_KEY = "surajKiranCart";
+/* ==========================================
+   HELPERS
+   ========================================== */
 
-const rupees = n =>
-  `₹${Number(n).toLocaleString("en-IN", {
-    minimumFractionDigits: 0,
+function rupees(amount) {
+  return "₹" + Number(amount).toLocaleString("en-IN", {
+    minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
     maximumFractionDigits: 2
-  })}`;
-
-const imagesOf = p => p.images || [p.image];
-
-const packLabel = grams =>
-  Number(grams) === 1000 ? "1kg" : `${grams}g`;
-
-const priceFor = (p, grams) => {
-  if (!p.sizes) return p.price;
-
-  return Math.round(
-    (p.price * Number(grams) / 1000) * 100
-  ) / 100;
-};
-
-const money = p =>
-  p.price == null
-    ? "Price on enquiry"
-    : `${rupees(p.price)}/${p.unit || "kg"}`;
-
-const escapeHtml = value =>
-  String(value).replace(/[&<>"']/g, c => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  }[c]));
-
-function card(p) {
-  return `
-    <article
-      class="product-card"
-      data-product="${p.id}"
-      tabindex="0"
-      role="button"
-      aria-label="View ${escapeHtml(p.name)} details"
-      style="cursor:pointer"
-    >
-      <div class="product-media">
-        <div class="product-slider">
-          ${imagesOf(p).map(img => `
-            <img
-              src="${escapeHtml(img)}"
-              alt="${escapeHtml(p.name)}"
-              loading="lazy"
-            >
-          `).join("")}
-        </div>
-
-        <button
-          type="button"
-          class="quick-add"
-          data-add="${p.id}"
-          aria-label="Add ${escapeHtml(p.name)}"
-        >+</button>
-      </div>
-
-      <div class="product-body">
-        <span class="product-cat">SURAJ KIRAN</span>
-        <h3 class="product-name">${escapeHtml(p.name)}</h3>
-        <p class="product-desc">${escapeHtml(p.desc)}</p>
-        <div class="product-meta">
-          <span class="price">${money(p)}</span>
-        </div>
-      </div>
-    </article>
-  `;
+  });
 }
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, function (char) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[char];
+  });
+}
+
+function getProduct(id) {
+  return PRODUCTS.find(p => p.id === id);
+}
+
+function imagesOf(product) {
+  return product.images || (product.image ? [product.image] : []);
+}
+
+function defaultGrams(product) {
+  return product.sizes ? 1000 : product.grams;
+}
+
+function packLabel(grams) {
+  return grams === 1000 ? "1kg" : grams + "g";
+}
+
+function priceFor(product, grams) {
+  if (!product.sizes) {
+    return product.price;
+  }
+
+  return Number((product.price * grams / 1000).toFixed(2));
+}
+
+function displayPrice(product) {
+  if (product.sizes) {
+    return rupees(product.price) + "/kg";
+  }
+
+  return rupees(product.price) + "/" + product.unit;
+}
+
+function productUrl(product) {
+  return "product.html?id=" + encodeURIComponent(product.id);
+}
+
+/* ==========================================
+   SHOPPING BAG
+   ========================================== */
 
 function getCart() {
   try {
-    const cart = JSON.parse(
-      localStorage.getItem(CART_KEY) || "[]"
-    );
-
-    return Array.isArray(cart) ? cart : [];
-  } catch {
+    const stored = JSON.parse(localStorage.getItem(CART_KEY));
+    return Array.isArray(stored) ? stored : [];
+  } catch (error) {
     return [];
   }
 }
@@ -148,782 +190,849 @@ function getCart() {
 function saveCart(cart) {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
   updateCount();
-  renderCart();
+}
+
+function cartGrams(item, product) {
+  const grams = Number(item.grams);
+
+  if (product.sizes) {
+    return product.sizes.includes(grams) ? grams : 1000;
+  }
+
+  return product.grams;
 }
 
 function updateCount() {
-  const count = getCart().reduce(
-    (sum, item) => sum + (Number(item.qty) || 0),
-    0
-  );
+  const count = getCart().reduce((total, item) => {
+    return total + (Number(item.qty) || 0);
+  }, 0);
 
-  document.querySelectorAll("#cartCount").forEach(el => {
-    el.textContent = count;
+  document.querySelectorAll("#cartCount").forEach(element => {
+    element.textContent = count;
   });
 }
 
-function cartPack(p, item) {
-  if (!p.sizes) return null;
+function add(id, grams, quantity = 1) {
+  const product = getProduct(id);
+  if (!product) return;
 
-  const grams = Number(item.grams);
+  const selectedGrams = product.sizes &&
+    product.sizes.includes(Number(grams))
+    ? Number(grams)
+    : defaultGrams(product);
 
-  return p.sizes.includes(grams) ? grams : 1000;
-}
-
-function add(id, grams) {
-  const p = PRODUCTS.find(x => x.id === id);
-  if (!p) return;
-
-  const selected = p.sizes
-    ? (
-        p.sizes.includes(Number(grams))
-          ? Number(grams)
-          : 250
-      )
-    : null;
+  const qty = Math.max(1, Math.floor(Number(quantity) || 1));
 
   const cart = getCart();
 
   const existing = cart.find(item =>
     item.id === id &&
-    (
-      p.sizes
-        ? cartPack(p, item) === selected
-        : true
-    )
+    cartGrams(item, product) === selectedGrams
   );
 
   if (existing) {
-    existing.qty = (Number(existing.qty) || 0) + 1;
+    existing.qty = (Number(existing.qty) || 0) + qty;
+    existing.grams = selectedGrams;
   } else {
     cart.push({
-      id,
-      grams: selected,
-      qty: 1
+      id: id,
+      grams: selectedGrams,
+      qty: qty
     });
   }
 
   saveCart(cart);
+  showToast(product.name + " added to bag");
 }
 
-function cartSummary() {
-  const items = [];
-  let total = 0;
+function showToast(message) {
+  let toast = document.getElementById("skToast");
 
-  getCart().forEach(item => {
-    const p = PRODUCTS.find(x => x.id === item.id);
-    if (!p) return;
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "skToast";
+    toast.style.cssText = [
+      "position:fixed",
+      "bottom:25px",
+      "left:50%",
+      "transform:translateX(-50%)",
+      "background:#123b2a",
+      "color:white",
+      "padding:13px 22px",
+      "z-index:9999",
+      "font-family:Inter,sans-serif",
+      "font-size:14px",
+      "box-shadow:0 8px 25px #0002",
+      "max-width:90%",
+      "text-align:center"
+    ].join(";");
 
-    const grams = cartPack(p, item);
-    const qty = Number(item.qty) || 0;
+    document.body.appendChild(toast);
+  }
 
-    if (qty <= 0) return;
+  toast.textContent = message;
+  toast.style.display = "block";
 
-    const unitPrice = priceFor(p, grams);
-    const line = Math.round(unitPrice * qty * 100) / 100;
+  clearTimeout(showToast.timer);
 
-    total += line;
-
-    items.push({
-      id: p.id,
-      name: p.name,
-      image: imagesOf(p)[0],
-      grams,
-      pack: p.sizes
-        ? packLabel(grams)
-        : (p.unit || "1kg"),
-      qty,
-      unitPrice,
-      line
-    });
-  });
-
-  return {
-    items,
-    total: Math.round(total * 100) / 100
-  };
+  showToast.timer = setTimeout(() => {
+    toast.style.display = "none";
+  }, 2200);
 }
 
-function ensureDetails() {
-  if (document.querySelector("#skProductOverlay")) return;
+/* ==========================================
+   PRODUCT IMAGE GALLERY
+   ========================================== */
 
-  const style = document.createElement("style");
+function galleryHtml(product, detail = false) {
+  const images = imagesOf(product);
 
-  style.textContent = `
-    .sk-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.65);
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      overflow: auto;
-    }
-
-    .sk-dialog {
-      position: relative;
-      background: #fff;
-      color: #222;
-      width: min(900px,100%);
-      max-height: 92vh;
-      overflow: auto;
-      border-radius: 16px;
-      padding: clamp(18px,4vw,32px);
-      box-shadow: 0 15px 60px #0004;
-    }
-
-    .sk-close {
-      position: absolute;
-      right: 12px;
-      top: 10px;
-      border: 0;
-      background: #f2f2f2;
-      color: #222;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      font-size: 24px;
-      cursor: pointer;
-      z-index: 1;
-    }
-
-    .sk-layout {
-      display: grid;
-      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-      gap: 28px;
-      align-items: start;
-    }
-
-    .sk-main-image {
-      width: 100%;
-      aspect-ratio: 1/1;
-      object-fit: contain;
-      background: #fafafa;
-      border-radius: 12px;
-    }
-
-    .sk-thumbs {
-      display: flex;
-      gap: 10px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-
-    .sk-thumbs button {
-      border: 2px solid #ddd;
-      border-radius: 8px;
-      background: #fff;
-      padding: 3px;
-      cursor: pointer;
-    }
-
-    .sk-thumbs button[aria-pressed="true"] {
-      border-color: #79542b;
-    }
-
-    .sk-thumbs img {
-      width: 65px;
-      height: 65px;
-      object-fit: contain;
-    }
-
-    .sk-dialog h2 {
-      margin: 8px 0 12px;
-      font-size: clamp(24px,4vw,34px);
-    }
-
-    .sk-price {
-      font-size: 26px;
-      font-weight: 700;
-      margin: 12px 0;
-    }
-
-    .sk-select {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #bbb;
-      border-radius: 8px;
-      font: inherit;
-      margin: 8px 0 16px;
-    }
-
-    .sk-add {
-      background: #273e29;
-      color: white;
-      border: 0;
-      border-radius: 8px;
-      padding: 14px 22px;
-      width: 100%;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .sk-description {
-      line-height: 1.7;
-    }
-
-    .sk-checkout {
-      margin-top: 28px;
-      padding: 22px;
-      border: 1px solid #ddd;
-      border-radius: 14px;
-      background: #fafaf8;
-    }
-
-    .sk-checkout h2 {
-      margin: 0 0 8px;
-    }
-
-    .sk-checkout label {
-      display: block;
-      font-weight: 600;
-      margin: 14px 0 6px;
-    }
-
-    .sk-checkout input,
-    .sk-checkout textarea {
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      border: 1px solid #bbb;
-      border-radius: 8px;
-      background: white;
-      color: #222;
-      font: inherit;
-    }
-
-    .sk-checkout textarea {
-      min-height: 95px;
-      resize: vertical;
-    }
-
-    .sk-whatsapp {
-      display: block;
-      width: 100%;
-      margin-top: 20px;
-      padding: 15px;
-      background: #128c47;
-      color: #fff;
-      border: 0;
-      border-radius: 8px;
-      font: inherit;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .sk-checkout-note {
-      font-size: 13px;
-      color: #555;
-      line-height: 1.6;
-      margin-top: 10px;
-    }
-
-    @media(max-width:620px) {
-      .sk-layout {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-
-      .sk-dialog {
-        max-height: 95vh;
-      }
-
-      .sk-checkout {
-        padding: 16px;
-      }
-    }
-  `;
-
-  document.head.appendChild(style);
-
-  const overlay = document.createElement("div");
-  overlay.id = "skProductOverlay";
-  overlay.className = "sk-overlay";
-  overlay.hidden = true;
-  overlay.style.display = "none";
-
-  overlay.innerHTML = `
-    <section
-      class="sk-dialog"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Product details"
-    >
-      <button
-        type="button"
-        class="sk-close"
-        data-close-details
-        aria-label="Close product details"
-      >×</button>
-
-      <div id="skProductContent"></div>
-    </section>
-  `;
-
-  document.body.appendChild(overlay);
-}
-
-function closeDetails() {
-  const overlay = document.querySelector("#skProductOverlay");
-  if (!overlay) return;
-
-  overlay.hidden = true;
-  overlay.style.display = "none";
-  document.body.style.overflow = "";
-}
-
-function openDetails(id) {
-  const p = PRODUCTS.find(x => x.id === id);
-  if (!p) return;
-
-  ensureDetails();
-
-  const pictures = imagesOf(p);
-  const content = document.querySelector("#skProductContent");
-
-  content.innerHTML = `
-    <div class="sk-layout">
-      <div>
-        <img
-          id="skMainImage"
-          class="sk-main-image"
-          src="${escapeHtml(pictures[0])}"
-          alt="${escapeHtml(p.name)}"
-        >
-
-        ${pictures.length > 1 ? `
-          <div class="sk-thumbs">
-            ${pictures.map((img, i) => `
-              <button
-                type="button"
-                data-image-index="${i}"
-                aria-pressed="${i === 0}"
-              >
-                <img
-                  src="${escapeHtml(img)}"
-                  alt="${escapeHtml(p.name)} image ${i + 1}"
-                >
-              </button>
-            `).join("")}
-          </div>
-        ` : ""}
+  return `
+    <div class="sk-gallery ${detail ? "sk-gallery-detail" : ""}">
+      <div class="product-slider" data-slider>
+        ${images.map((image, index) => `
+          <img
+            src="${escapeHtml(image)}"
+            alt="${escapeHtml(product.name)} image ${index + 1}"
+            loading="${detail && index === 0 ? "eager" : "lazy"}"
+          >
+        `).join("")}
       </div>
 
-      <div>
-        <span class="product-cat">SURAJ KIRAN</span>
-
-        <h2>${escapeHtml(p.name)}</h2>
-
-        <p class="sk-description">
-          ${escapeHtml(p.desc)}
-        </p>
-
-        ${p.sizes ? `
-          <label for="skPackSize">
-            <strong>Select pack size</strong>
-          </label>
-
-          <select id="skPackSize" class="sk-select">
-            ${p.sizes.map(g => `
-              <option value="${g}">
-                ${packLabel(g)} — ${rupees(priceFor(p, g))}
-              </option>
-            `).join("")}
-          </select>
-        ` : `
-          <p>Pack: ${escapeHtml(p.unit || "1kg")}</p>
-        `}
-
-        <div id="skDetailsPrice" class="sk-price">
-          ${p.sizes
-            ? rupees(priceFor(p, 250))
-            : rupees(p.price)}
-        </div>
+      ${images.length > 1 ? `
+        <button
+          class="gallery-arrow gallery-prev"
+          type="button"
+          data-gallery-direction="-1"
+          aria-label="Previous image"
+        >&#10094;</button>
 
         <button
+          class="gallery-arrow gallery-next"
           type="button"
-          class="sk-add"
-          data-detail-add="${p.id}"
-        >
-          Add to Cart
-        </button>
-      </div>
+          data-gallery-direction="1"
+          aria-label="Next image"
+        >&#10095;</button>
+
+        <div class="gallery-dots">
+          ${images.map((_, index) => `
+            <button
+              type="button"
+              class="gallery-dot ${index === 0 ? "active" : ""}"
+              data-gallery-index="${index}"
+              aria-label="Show image ${index + 1}"
+            ></button>
+          `).join("")}
+        </div>
+      ` : ""}
     </div>
   `;
-
-  const overlay = document.querySelector("#skProductOverlay");
-
-  overlay.dataset.productId = id;
-  overlay.hidden = false;
-  overlay.style.display = "flex";
-  document.body.style.overflow = "hidden";
-
-  overlay.querySelector(".sk-close").focus();
 }
 
-function renderCart() {
-  const box = document.querySelector("#cartItems");
-  if (!box) return;
+function moveGallery(button, direction) {
+  const gallery = button.closest(".sk-gallery");
+  if (!gallery) return;
 
-  const { items, total } = cartSummary();
+  const slider = gallery.querySelector("[data-slider]");
+  if (!slider) return;
 
-  if (!items.length) {
-    box.innerHTML = `
+  const images = slider.querySelectorAll("img");
+  if (!images.length) return;
+
+  const width = slider.clientWidth;
+  if (!width) return;
+
+  const current = Math.round(slider.scrollLeft / width);
+
+  const next = Math.max(
+    0,
+    Math.min(images.length - 1, current + direction)
+  );
+
+  slider.scrollTo({
+    left: next * width,
+    behavior: "smooth"
+  });
+}
+
+function goToGalleryImage(button, index) {
+  const gallery = button.closest(".sk-gallery");
+  if (!gallery) return;
+
+  const slider = gallery.querySelector("[data-slider]");
+  if (!slider) return;
+
+  slider.scrollTo({
+    left: Number(index) * slider.clientWidth,
+    behavior: "smooth"
+  });
+}
+
+function updateGalleryDots(slider) {
+  const gallery = slider.closest(".sk-gallery");
+  if (!gallery) return;
+
+  const width = slider.clientWidth;
+  if (!width) return;
+
+  const active = Math.round(slider.scrollLeft / width);
+
+  gallery.querySelectorAll(".gallery-dot").forEach((dot, index) => {
+    dot.classList.toggle("active", index === active);
+  });
+}
+
+/* ==========================================
+   PRODUCT CARDS
+   ========================================== */
+
+function card(product) {
+  return `
+    <article class="product-card" data-product="${product.id}">
+      <div class="product-media">
+        ${galleryHtml(product)}
+
+        <button
+          class="quick-add"
+          type="button"
+          data-quick-add="${product.id}"
+          aria-label="Add ${escapeHtml(product.name)} to bag"
+          title="Add to bag"
+        >+</button>
+      </div>
+
+      <div class="product-body">
+        <span class="product-cat">
+          ${escapeHtml(product.category)}
+        </span>
+
+        <h3 class="product-name">
+          <a href="${productUrl(product)}">
+            ${escapeHtml(product.name)}
+          </a>
+        </h3>
+
+        <p class="product-desc">
+          ${escapeHtml(product.desc)}
+        </p>
+
+        <div class="product-meta">
+          <span class="price">
+            ${displayPrice(product)}
+          </span>
+
+          <a class="text-link" href="${productUrl(product)}">
+            View Details
+          </a>
+        </div>
+      </div>
+    </article>
+  `;
+}
+
+function renderProducts() {
+  const featured = document.getElementById("featuredProducts");
+
+  if (featured) {
+    featured.innerHTML = PRODUCTS.slice(0, 3).map(card).join("");
+  }
+
+  const all = document.getElementById("allProducts");
+
+  if (all) {
+    all.innerHTML = PRODUCTS.map(card).join("");
+  }
+
+  const search = document.getElementById("productSearch");
+
+  if (search && all) {
+    search.addEventListener("input", function () {
+      const query = search.value.trim().toLowerCase();
+
+      const results = PRODUCTS.filter(product => {
+        return (
+          product.name.toLowerCase().includes(query) ||
+          product.category.toLowerCase().includes(query) ||
+          product.desc.toLowerCase().includes(query)
+        );
+      });
+
+      all.innerHTML = results.length
+        ? results.map(card).join("")
+        : '<p>No teas found. Try another search.</p>';
+    });
+  }
+}
+
+/* ==========================================
+   SINGLE PRODUCT DETAILS PAGE
+   ========================================== */
+
+function renderProductDetails() {
+  const container = document.getElementById("productDetails");
+  if (!container) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const product = getProduct(id);
+
+  if (!product) {
+    container.innerHTML = `
       <div class="panel">
-        <h2>Your bag is empty.</h2>
-        <a class="text-link" href="products.html">
-          Explore our teas →
+        <h2>Product not found</h2>
+        <p>Please return to our tea collection.</p>
+        <a class="btn btn-primary" href="products.html">
+          Explore Our Teas
         </a>
       </div>
     `;
-
-    const totalEl = document.querySelector("#cartTotal");
-    if (totalEl) totalEl.textContent = "₹0";
-
-    document.querySelector("#skCheckout")?.remove();
     return;
   }
 
-  box.innerHTML = items.map(item => `
-    <div class="cart-item">
-      <div class="thumb">
-        <img
-          src="${escapeHtml(item.image)}"
-          alt="${escapeHtml(item.name)}"
+  document.title = product.name + " | Suraj Kiran";
+
+  const sizesHtml = product.sizes
+    ? `
+      <label for="detailPack" class="detail-label">
+        Choose Pack Size
+      </label>
+
+      <select id="detailPack" class="detail-select">
+        ${product.sizes.map(grams => `
+          <option value="${grams}" ${grams === 1000 ? "selected" : ""}>
+            ${packLabel(grams)} — ${rupees(priceFor(product, grams))}
+          </option>
+        `).join("")}
+      </select>
+    `
+    : `
+      <div class="detail-fixed-pack">
+        Pack Size: <strong>${product.unit}</strong>
+      </div>
+    `;
+
+  container.innerHTML = `
+    <div class="detail-gallery-column">
+      ${galleryHtml(product, true)}
+    </div>
+
+    <div class="detail-information">
+      <span class="eyebrow">
+        ${escapeHtml(product.category)}
+      </span>
+
+      <h1 class="detail-title">
+        ${escapeHtml(product.name)}
+      </h1>
+
+      <p class="detail-short-description">
+        ${escapeHtml(product.desc)}
+      </p>
+
+      <div class="detail-price" id="detailPrice">
+        ${rupees(product.price)}
+      </div>
+
+      <p class="detail-price-note">
+        Inclusive product price. Delivery charges, if any,
+        will be confirmed before the order is finalised.
+      </p>
+
+      <div class="detail-purchase">
+        ${sizesHtml}
+
+        <label for="detailQuantity" class="detail-label">
+          Quantity
+        </label>
+
+        <input
+          type="number"
+          id="detailQuantity"
+          class="detail-quantity"
+          value="1"
+          min="1"
+          max="99"
         >
+
+        <button
+          type="button"
+          class="btn btn-primary detail-add-btn"
+          data-detail-add="${product.id}"
+        >
+          Add to Bag
+        </button>
+
+        <a class="btn btn-ghost detail-bag-link" href="cart.html">
+          View Shopping Bag
+        </a>
       </div>
 
-      <div>
-        <strong>${escapeHtml(item.name)}</strong>
-        <div class="small">
-          ${rupees(item.unitPrice)} / ${item.pack}
-          × ${item.qty}
-        </div>
-      </div>
+      <div class="detail-description">
+        <h2>About This Tea</h2>
+        <p>${escapeHtml(product.description)}</p>
 
-      <div class="cart-price">
-        <strong>${rupees(item.line)}</strong>
+        <h3>Product Highlights</h3>
+        <ul>
+          ${product.highlights.map(highlight => `
+            <li>${escapeHtml(highlight)}</li>
+          `).join("")}
+        </ul>
       </div>
     </div>
-  `).join("");
-
-  const totalEl = document.querySelector("#cartTotal");
-
-  if (totalEl) {
-    totalEl.textContent = rupees(total);
-  }
-
-  ensureCheckout();
-}
-
-function ensureCheckout() {
-  if (document.querySelector("#skCheckout")) return;
-
-  const cartBox = document.querySelector("#cartItems");
-  if (!cartBox) return;
-
-  const checkout = document.createElement("section");
-  checkout.id = "skCheckout";
-  checkout.className = "sk-checkout";
-
-  checkout.innerHTML = `
-    <h2>Complete Your Order</h2>
-    <p>
-      Enter your delivery details and send your order
-      to Suraj Kiran on WhatsApp.
-    </p>
-
-    <form id="skCheckoutForm">
-      <label for="skCustomerName">Full Name *</label>
-      <input
-        id="skCustomerName"
-        name="customerName"
-        type="text"
-        autocomplete="name"
-        required
-      >
-
-      <label for="skCustomerPhone">Mobile Number *</label>
-      <input
-        id="skCustomerPhone"
-        name="customerPhone"
-        type="tel"
-        inputmode="numeric"
-        pattern="[0-9]{10}"
-        maxlength="10"
-        placeholder="10-digit mobile number"
-        required
-      >
-
-      <label for="skCustomerAddress">Full Address *</label>
-      <textarea
-        id="skCustomerAddress"
-        name="customerAddress"
-        autocomplete="street-address"
-        placeholder="House, street, area, city, state"
-        required
-      ></textarea>
-
-      <label for="skCustomerPincode">PIN Code *</label>
-      <input
-        id="skCustomerPincode"
-        name="customerPincode"
-        type="text"
-        inputmode="numeric"
-        pattern="[0-9]{6}"
-        maxlength="6"
-        placeholder="6-digit PIN code"
-        required
-      >
-
-      <button
-        type="submit"
-        class="sk-whatsapp"
-      >
-        Place Order on WhatsApp
-      </button>
-
-      <p class="sk-checkout-note">
-        WhatsApp will open with your order details.
-        Please press Send to place your order.
-        Delivery charges and payment can be confirmed
-        with Suraj Kiran.
-      </p>
-    </form>
   `;
 
-  cartBox.insertAdjacentElement("afterend", checkout);
+  const pack = document.getElementById("detailPack");
+
+  if (pack) {
+    pack.addEventListener("change", function () {
+      const price = priceFor(product, Number(pack.value));
+      document.getElementById("detailPrice").textContent = rupees(price);
+    });
+  }
+}
+
+/* ==========================================
+   CART PAGE
+   ========================================== */
+
+function changeCartQuantity(index, difference) {
+  const cart = getCart();
+
+  if (!cart[index]) return;
+
+  cart[index].qty = (Number(cart[index].qty) || 1) + difference;
+
+  if (cart[index].qty <= 0) {
+    cart.splice(index, 1);
+  }
+
+  saveCart(cart);
+  renderCart();
+}
+
+function removeCartItem(index) {
+  const cart = getCart();
+
+  cart.splice(index, 1);
+
+  saveCart(cart);
+  renderCart();
+}
+
+function cartSummary() {
+  const cart = getCart();
+  const lines = [];
+  let total = 0;
+
+  cart.forEach(item => {
+    const product = getProduct(item.id);
+    if (!product) return;
+
+    const grams = cartGrams(item, product);
+    const qty = Math.max(1, Number(item.qty) || 1);
+    const unitPrice = priceFor(product, grams);
+    const subtotal = unitPrice * qty;
+
+    total += subtotal;
+
+    lines.push({
+      product,
+      grams,
+      qty,
+      unitPrice,
+      subtotal
+    });
+  });
+
+  return { lines, total };
+}
+
+function renderCart() {
+  const container = document.getElementById("cartItems");
+  if (!container) return;
+
+  const summary = cartSummary();
+  const cart = getCart();
+
+  if (!summary.lines.length) {
+    container.innerHTML = `
+      <div class="panel">
+        <h2>Your bag is empty.</h2>
+        <p>Explore our tea collection and find your next favourite cup.</p>
+        <a class="btn btn-primary" href="products.html">
+          Shop Our Teas
+        </a>
+      </div>
+    `;
+  } else {
+    container.innerHTML = cart.map((item, index) => {
+      const product = getProduct(item.id);
+      if (!product) return "";
+
+      const grams = cartGrams(item, product);
+      const qty = Math.max(1, Number(item.qty) || 1);
+      const subtotal = priceFor(product, grams) * qty;
+
+      return `
+        <div class="cart-item">
+          <a class="thumb" href="${productUrl(product)}">
+            <img
+              src="${escapeHtml(imagesOf(product)[0])}"
+              alt="${escapeHtml(product.name)}"
+            >
+          </a>
+
+          <div class="cart-item-info">
+            <a href="${productUrl(product)}">
+              <strong>${escapeHtml(product.name)}</strong>
+            </a>
+
+            <p class="small muted">
+              Pack: ${packLabel(grams)}
+            </p>
+
+            <div class="cart-quantity-controls">
+              <button
+                type="button"
+                data-cart-minus="${index}"
+                aria-label="Decrease quantity"
+              >−</button>
+
+              <span>${qty}</span>
+
+              <button
+                type="button"
+                data-cart-plus="${index}"
+                aria-label="Increase quantity"
+              >+</button>
+            </div>
+
+            <button
+              type="button"
+              class="cart-remove"
+              data-cart-remove="${index}"
+            >
+              Remove
+            </button>
+          </div>
+
+          <div class="cart-price">
+            <strong>${rupees(subtotal)}</strong>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  const totalElement = document.getElementById("cartTotal");
+
+  if (totalElement) {
+    totalElement.textContent = rupees(summary.total);
+  }
+
+  ensureCheckout(summary.lines.length > 0);
+}
+
+/* ==========================================
+   WHATSAPP CHECKOUT
+   ========================================== */
+
+function ensureCheckout(hasItems) {
+  const cartItems = document.getElementById("cartItems");
+  if (!cartItems) return;
+
+  let checkout = document.getElementById("skCheckout");
+
+  if (!checkout) {
+    checkout = document.createElement("div");
+    checkout.id = "skCheckout";
+    checkout.className = "form-card sk-checkout";
+
+    checkout.innerHTML = `
+      <h2>Delivery Details</h2>
+
+      <p>
+        Enter your details to prepare your order on WhatsApp.
+      </p>
+
+      <form id="whatsappOrderForm">
+        <label>
+          Full Name
+          <input
+            type="text"
+            id="customerName"
+            required
+            maxlength="100"
+            autocomplete="name"
+            placeholder="Your full name"
+          >
+        </label>
+
+        <label>
+          Mobile Number
+          <input
+            type="tel"
+            id="customerMobile"
+            required
+            pattern="[0-9]{10}"
+            maxlength="10"
+            inputmode="numeric"
+            placeholder="10-digit mobile number"
+          >
+        </label>
+
+        <label>
+          Delivery Address
+          <textarea
+            id="customerAddress"
+            required
+            rows="3"
+            maxlength="500"
+            placeholder="House, street, area, city and state"
+          ></textarea>
+        </label>
+
+        <label>
+          PIN Code
+          <input
+            type="text"
+            id="customerPin"
+            required
+            pattern="[0-9]{6}"
+            maxlength="6"
+            inputmode="numeric"
+            placeholder="6-digit PIN code"
+          >
+        </label>
+
+        <button
+          type="submit"
+          class="btn btn-primary full"
+        >
+          Continue to WhatsApp
+        </button>
+
+        <p class="small muted">
+          Your order is not placed automatically.
+          Please review the message and press Send in WhatsApp.
+          Availability, delivery charges and payment will
+          be confirmed by our team.
+        </p>
+      </form>
+    `;
+
+    cartItems.insertAdjacentElement("afterend", checkout);
+
+    const form = checkout.querySelector("#whatsappOrderForm");
+
+    form.addEventListener("submit", placeWhatsAppOrder);
+  }
+
+  checkout.style.display = hasItems ? "" : "none";
 }
 
 function placeWhatsAppOrder(event) {
   event.preventDefault();
 
-  const form = event.currentTarget;
+  const summary = cartSummary();
 
-  if (!form.reportValidity()) return;
-
-  const name = form.elements.customerName.value.trim();
-  const phone = form.elements.customerPhone.value.trim();
-  const address = form.elements.customerAddress.value.trim();
-  const pincode = form.elements.customerPincode.value.trim();
-
-  if (!name || !address) {
-    alert("Please complete your name and address.");
+  if (!summary.lines.length) {
+    alert("Your shopping bag is empty.");
     return;
   }
 
-  if (!/^[0-9]{10}$/.test(phone)) {
-    alert("Please enter a valid 10-digit mobile number.");
+  const name = document.getElementById("customerName").value.trim();
+  const mobile = document.getElementById("customerMobile").value.trim();
+  const address = document.getElementById("customerAddress").value.trim();
+  const pin = document.getElementById("customerPin").value.trim();
+
+  if (!name || !address ||
+      !/^[0-9]{10}$/.test(mobile) ||
+      !/^[0-9]{6}$/.test(pin)) {
+    alert("Please enter valid delivery details.");
     return;
   }
 
-  if (!/^[0-9]{6}$/.test(pincode)) {
-    alert("Please enter a valid 6-digit PIN code.");
-    return;
-  }
-
-  const { items, total } = cartSummary();
-
-  if (!items.length) {
-    alert("Your cart is empty.");
-    return;
-  }
-
-  const lines = [
-    "*NEW ORDER - SURAJ KIRAN*",
-    "",
-    "*Customer Details*",
-    `Name: ${name}`,
-    `Mobile: ${phone}`,
-    `Address: ${address}`,
-    `PIN Code: ${pincode}`,
-    "",
-    "*Order Details*"
-  ];
-
-  items.forEach((item, index) => {
-    lines.push(
-      `${index + 1}. ${item.name}`,
-      `Pack: ${item.pack}`,
-      `Quantity: ${item.qty}`,
-      `Price per pack: ${rupees(item.unitPrice)}`,
-      `Subtotal: ${rupees(item.line)}`,
-      ""
+  const itemsText = summary.lines.map((line, index) => {
+    return (
+      (index + 1) + ". " + line.product.name +
+      "\nPack: " + packLabel(line.grams) +
+      "\nQuantity: " + line.qty +
+      "\nPrice: " + rupees(line.subtotal)
     );
-  });
+  }).join("\n\n");
 
-  lines.push(
-    `*Total: ${rupees(total)}*`,
+  const message = [
+    "Hello Suraj Kiran,",
     "",
-    "Delivery charges and payment to be confirmed.",
+    "I would like to enquire about placing this order:",
     "",
-    "Please confirm my order."
-  );
+    itemsText,
+    "",
+    "Product Total: " + rupees(summary.total),
+    "",
+    "CUSTOMER DETAILS",
+    "Name: " + name,
+    "Mobile: " + mobile,
+    "Address: " + address,
+    "PIN Code: " + pin,
+    "",
+    "Please confirm availability, delivery charges and payment details."
+  ].join("\n");
 
-  const message = lines.join("\n");
-
-  const url =
-    `https://wa.me/${WHATSAPP_NUMBER}?text=` +
-    encodeURIComponent(message);
+  const url = "https://wa.me/" + WHATSAPP_NUMBER +
+    "?text=" + encodeURIComponent(message);
 
   window.location.href = url;
 }
 
-document.addEventListener("submit", event => {
-  if (event.target.id === "skCheckoutForm") {
-    placeWhatsAppOrder(event);
-  }
-});
+/* ==========================================
+   CLICK HANDLERS
+   ========================================== */
 
-document.addEventListener("click", e => {
-  if (
-    e.target.matches("#skProductOverlay") ||
-    e.target.closest("[data-close-details]")
-  ) {
-    closeDetails();
+document.addEventListener("click", function (event) {
+  const arrow = event.target.closest("[data-gallery-direction]");
+
+  if (arrow) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    moveGallery(
+      arrow,
+      Number(arrow.dataset.galleryDirection)
+    );
     return;
   }
 
-  const thumb = e.target.closest("[data-image-index]");
+  const dot = event.target.closest("[data-gallery-index]");
 
-  if (thumb) {
-    const overlay = document.querySelector("#skProductOverlay");
-    const id = overlay?.dataset.productId;
-    const p = PRODUCTS.find(x => x.id === id);
+  if (dot) {
+    event.preventDefault();
+    event.stopPropagation();
 
-    if (p) {
-      const index = Number(thumb.dataset.imageIndex);
+    goToGalleryImage(dot, dot.dataset.galleryIndex);
+    return;
+  }
 
-      document.querySelector("#skMainImage").src =
-        imagesOf(p)[index];
+  const quickAdd = event.target.closest("[data-quick-add]");
 
-      overlay.querySelectorAll("[data-image-index]").forEach(b => {
-        b.setAttribute(
-          "aria-pressed",
-          String(b === thumb)
-        );
-      });
+  if (quickAdd) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const product = getProduct(quickAdd.dataset.quickAdd);
+
+    if (product) {
+      add(product.id, defaultGrams(product), 1);
     }
-
     return;
   }
 
-  const detailAdd = e.target.closest("[data-detail-add]");
+  const detailAdd = event.target.closest("[data-detail-add]");
 
   if (detailAdd) {
-    const grams = document.querySelector("#skPackSize")?.value;
+    const product = getProduct(detailAdd.dataset.detailAdd);
+    if (!product) return;
 
-    add(detailAdd.dataset.detailAdd, grams);
+    const pack = document.getElementById("detailPack");
+    const quantity = document.getElementById("detailQuantity");
 
-    detailAdd.textContent = "✓ Added to Cart";
+    const grams = pack
+      ? Number(pack.value)
+      : defaultGrams(product);
+
+    const qty = quantity
+      ? Math.max(1, Math.floor(Number(quantity.value) || 1))
+      : 1;
+
+    add(product.id, grams, qty);
     return;
   }
 
-  const quick = e.target.closest("[data-add]");
+  const plus = event.target.closest("[data-cart-plus]");
 
-  if (quick) {
-    const p = PRODUCTS.find(x => x.id === quick.dataset.add);
-
-    if (p?.sizes) {
-      openDetails(p.id);
-    } else {
-      add(quick.dataset.add);
-      quick.textContent = "✓";
-
-      setTimeout(() => {
-        if (quick.isConnected) quick.textContent = "+";
-      }, 700);
-    }
-
+  if (plus) {
+    changeCartQuantity(Number(plus.dataset.cartPlus), 1);
     return;
   }
 
-  const product = e.target.closest("[data-product]");
+  const minus = event.target.closest("[data-cart-minus]");
 
-  if (product) {
-    openDetails(product.dataset.product);
+  if (minus) {
+    changeCartQuantity(Number(minus.dataset.cartMinus), -1);
+    return;
+  }
+
+  const remove = event.target.closest("[data-cart-remove]");
+
+  if (remove) {
+    removeCartItem(Number(remove.dataset.cartRemove));
+    return;
+  }
+
+  const cardElement = event.target.closest(".product-card");
+
+  if (cardElement && !event.target.closest("a, button")) {
+    if (event.target.closest(".product-slider")) return;
+
+    window.location.href = "product.html?id=" +
+      encodeURIComponent(cardElement.dataset.product);
   }
 });
 
-document.addEventListener("keydown", e => {
-  if (e.key === "Escape") {
-    closeDetails();
+/* ==========================================
+   IMAGE DOT UPDATES
+   ========================================== */
+
+document.addEventListener("scroll", function (event) {
+  if (event.target.matches &&
+      event.target.matches("[data-slider]")) {
+    updateGalleryDots(event.target);
+  }
+}, true);
+
+/* ==========================================
+   MOBILE NAVIGATION
+   ========================================== */
+
+function setupNavigation() {
+  const menuButton = document.getElementById("menuBtn");
+  const mainNav = document.getElementById("mainNav");
+
+  if (menuButton && mainNav) {
+    menuButton.addEventListener("click", function () {
+      mainNav.classList.toggle("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        mainNav.classList.contains("open") ? "true" : "false"
+      );
+    });
   }
 
-  if (
-    (e.key === "Enter" || e.key === " ") &&
-    e.target.matches("[data-product]")
-  ) {
-    e.preventDefault();
-    openDetails(e.target.dataset.product);
+  const searchButton = document.getElementById("searchBtn");
+
+  if (searchButton) {
+    searchButton.addEventListener("click", function () {
+      window.location.href = "products.html";
+    });
   }
-});
-
-document.addEventListener("change", e => {
-  if (!e.target.matches("#skPackSize")) return;
-
-  const id = document.querySelector(
-    "#skProductOverlay"
-  )?.dataset.productId;
-
-  const p = PRODUCTS.find(x => x.id === id);
-
-  if (p) {
-    document.querySelector("#skDetailsPrice").textContent =
-      rupees(priceFor(p, Number(e.target.value)));
-  }
-});
-
-const featured = document.querySelector("#featuredProducts");
-
-if (featured) {
-  featured.innerHTML = PRODUCTS.slice(0, 3).map(card).join("");
 }
 
-const all = document.querySelector("#allProducts");
+/* ==========================================
+   INITIALISE WEBSITE
+   ========================================== */
 
-function renderAll(list = PRODUCTS) {
-  if (all) {
-    all.innerHTML = list.map(card).join("");
-  }
+function initialiseWebsite() {
+  renderProducts();
+  renderProductDetails();
+  renderCart();
+  updateCount();
+  setupNavigation();
 }
 
-renderAll();
-
-document.querySelector("#productSearch")?.addEventListener(
-  "input",
-  e => {
-    const query = e.target.value.toLowerCase();
-
-    renderAll(
-      PRODUCTS.filter(p =>
-        p.name.toLowerCase().includes(query)
-      )
-    );
-  }
-);
-
-document.querySelector("#menuBtn")?.addEventListener(
-  "click",
-  () => {
-    document.querySelector("#mainNav")
-      ?.classList.toggle("open");
-  }
-);
-
-document.querySelector("#searchBtn")?.addEventListener(
-  "click",
-  () => {
-    document.querySelector("#productSearch")?.focus();
-  }
-);
-
-renderCart();
-updateCount();
-
-
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initialiseWebsite);
+} else {
+  initialiseWebsite();
+}
