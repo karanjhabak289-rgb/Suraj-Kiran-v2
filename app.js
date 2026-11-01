@@ -115,9 +115,7 @@ const PRODUCTS = [
   }
 ];
 
-/* ==========================================
-   HELPERS
-   ========================================== */
+/* HELPERS */
 
 function rupees(amount) {
   return "₹" + Number(amount).toLocaleString("en-IN", {
@@ -127,15 +125,13 @@ function rupees(amount) {
 }
 
 function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, function (char) {
-    return {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;"
-    }[char];
-  });
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
 }
 
 function getProduct(id) {
@@ -155,34 +151,27 @@ function packLabel(grams) {
 }
 
 function priceFor(product, grams) {
-  if (!product.sizes) {
-    return product.price;
-  }
-
+  if (!product.sizes) return product.price;
   return Number((product.price * grams / 1000).toFixed(2));
 }
 
 function displayPrice(product) {
-  if (product.sizes) {
-    return rupees(product.price) + "/kg";
-  }
-
-  return rupees(product.price) + "/" + product.unit;
+  return product.sizes
+    ? rupees(product.price) + "/kg"
+    : rupees(product.price) + "/" + product.unit;
 }
 
 function productUrl(product) {
   return "product.html?id=" + encodeURIComponent(product.id);
 }
 
-/* ==========================================
-   SHOPPING BAG
-   ========================================== */
+/* SHOPPING BAG */
 
 function getCart() {
   try {
     const stored = JSON.parse(localStorage.getItem(CART_KEY));
     return Array.isArray(stored) ? stored : [];
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -194,18 +183,16 @@ function saveCart(cart) {
 
 function cartGrams(item, product) {
   const grams = Number(item.grams);
-
   if (product.sizes) {
     return product.sizes.includes(grams) ? grams : 1000;
   }
-
   return product.grams;
 }
 
 function updateCount() {
-  const count = getCart().reduce((total, item) => {
-    return total + (Number(item.qty) || 0);
-  }, 0);
+  const count = getCart().reduce(
+    (total, item) => total + (Number(item.qty) || 0), 0
+  );
 
   document.querySelectorAll("#cartCount").forEach(element => {
     element.textContent = count;
@@ -222,7 +209,6 @@ function add(id, grams, quantity = 1) {
     : defaultGrams(product);
 
   const qty = Math.max(1, Math.floor(Number(quantity) || 1));
-
   const cart = getCart();
 
   const existing = cart.find(item =>
@@ -234,11 +220,7 @@ function add(id, grams, quantity = 1) {
     existing.qty = (Number(existing.qty) || 0) + qty;
     existing.grams = selectedGrams;
   } else {
-    cart.push({
-      id: id,
-      grams: selectedGrams,
-      qty: qty
-    });
+    cart.push({ id, grams: selectedGrams, qty });
   }
 
   saveCart(cart);
@@ -251,28 +233,16 @@ function showToast(message) {
   if (!toast) {
     toast = document.createElement("div");
     toast.id = "skToast";
-    toast.style.cssText = [
-      "position:fixed",
-      "bottom:25px",
-      "left:50%",
-      "transform:translateX(-50%)",
-      "background:#123b2a",
-      "color:white",
-      "padding:13px 22px",
-      "z-index:9999",
-      "font-family:Inter,sans-serif",
-      "font-size:14px",
-      "box-shadow:0 8px 25px #0002",
-      "max-width:90%",
-      "text-align:center"
-    ].join(";");
-
+    toast.style.cssText =
+      "position:fixed;bottom:25px;left:50%;transform:translateX(-50%);" +
+      "background:#123b2a;color:white;padding:13px 22px;z-index:9999;" +
+      "font-family:Inter,sans-serif;font-size:14px;" +
+      "box-shadow:0 8px 25px #0002;max-width:90%;text-align:center";
     document.body.appendChild(toast);
   }
 
   toast.textContent = message;
   toast.style.display = "block";
-
   clearTimeout(showToast.timer);
 
   showToast.timer = setTimeout(() => {
@@ -280,9 +250,7 @@ function showToast(message) {
   }, 2200);
 }
 
-/* ==========================================
-   PRODUCT IMAGE GALLERY
-   ========================================== */
+/* PRODUCT IMAGE GALLERY */
 
 function galleryHtml(product, detail = false) {
   const images = imagesOf(product);
@@ -295,6 +263,7 @@ function galleryHtml(product, detail = false) {
             src="${escapeHtml(image)}"
             alt="${escapeHtml(product.name)} image ${index + 1}"
             loading="${detail && index === 0 ? "eager" : "lazy"}"
+            draggable="false"
           >
         `).join("")}
       </div>
@@ -337,20 +306,16 @@ function moveGallery(button, direction) {
   if (!slider) return;
 
   const images = slider.querySelectorAll("img");
-  if (!images.length) return;
+  if (!images.length || !slider.clientWidth) return;
 
-  const width = slider.clientWidth;
-  if (!width) return;
-
-  const current = Math.round(slider.scrollLeft / width);
-
+  const current = Math.round(slider.scrollLeft / slider.clientWidth);
   const next = Math.max(
     0,
     Math.min(images.length - 1, current + direction)
   );
 
   slider.scrollTo({
-    left: next * width,
+    left: next * slider.clientWidth,
     behavior: "smooth"
   });
 }
@@ -370,21 +335,16 @@ function goToGalleryImage(button, index) {
 
 function updateGalleryDots(slider) {
   const gallery = slider.closest(".sk-gallery");
-  if (!gallery) return;
+  if (!gallery || !slider.clientWidth) return;
 
-  const width = slider.clientWidth;
-  if (!width) return;
-
-  const active = Math.round(slider.scrollLeft / width);
+  const active = Math.round(slider.scrollLeft / slider.clientWidth);
 
   gallery.querySelectorAll(".gallery-dot").forEach((dot, index) => {
     dot.classList.toggle("active", index === active);
   });
 }
 
-/* ==========================================
-   PRODUCT CARDS
-   ========================================== */
+/* PRODUCT CARDS */
 
 function card(product) {
   return `
@@ -449,32 +409,27 @@ function renderProducts() {
     search.addEventListener("input", function () {
       const query = search.value.trim().toLowerCase();
 
-      const results = PRODUCTS.filter(product => {
-        return (
-          product.name.toLowerCase().includes(query) ||
-          product.category.toLowerCase().includes(query) ||
-          product.desc.toLowerCase().includes(query)
-        );
-      });
+      const results = PRODUCTS.filter(product =>
+        product.name.toLowerCase().includes(query) ||
+        product.category.toLowerCase().includes(query) ||
+        product.desc.toLowerCase().includes(query)
+      );
 
       all.innerHTML = results.length
         ? results.map(card).join("")
-        : '<p>No teas found. Try another search.</p>';
+        : "<p>No teas found. Try another search.</p>";
     });
   }
 }
 
-/* ==========================================
-   SINGLE PRODUCT DETAILS PAGE
-   ========================================== */
+/* SINGLE PRODUCT DETAILS PAGE */
 
 function renderProductDetails() {
   const container = document.getElementById("productDetails");
   if (!container) return;
 
   const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-  const product = getProduct(id);
+  const product = getProduct(params.get("id"));
 
   if (!product) {
     container.innerHTML = `
@@ -591,13 +546,10 @@ function renderProductDetails() {
   }
 }
 
-/* ==========================================
-   CART PAGE
-   ========================================== */
+/* CART PAGE */
 
 function changeCartQuantity(index, difference) {
   const cart = getCart();
-
   if (!cart[index]) return;
 
   cart[index].qty = (Number(cart[index].qty) || 1) + difference;
@@ -612,19 +564,16 @@ function changeCartQuantity(index, difference) {
 
 function removeCartItem(index) {
   const cart = getCart();
-
   cart.splice(index, 1);
-
   saveCart(cart);
   renderCart();
 }
 
 function cartSummary() {
-  const cart = getCart();
   const lines = [];
   let total = 0;
 
-  cart.forEach(item => {
+  getCart().forEach(item => {
     const product = getProduct(item.id);
     if (!product) return;
 
@@ -634,14 +583,7 @@ function cartSummary() {
     const subtotal = unitPrice * qty;
 
     total += subtotal;
-
-    lines.push({
-      product,
-      grams,
-      qty,
-      unitPrice,
-      subtotal
-    });
+    lines.push({ product, grams, qty, unitPrice, subtotal });
   });
 
   return { lines, total };
@@ -733,9 +675,7 @@ function renderCart() {
   ensureCheckout(summary.lines.length > 0);
 }
 
-/* ==========================================
-   WHATSAPP CHECKOUT
-   ========================================== */
+/* WHATSAPP CHECKOUT */
 
 function ensureCheckout(hasItems) {
   const cartItems = document.getElementById("cartItems");
@@ -805,10 +745,7 @@ function ensureCheckout(hasItems) {
           >
         </label>
 
-        <button
-          type="submit"
-          class="btn btn-primary full"
-        >
+        <button type="submit" class="btn btn-primary full">
           Continue to WhatsApp
         </button>
 
@@ -823,9 +760,8 @@ function ensureCheckout(hasItems) {
 
     cartItems.insertAdjacentElement("afterend", checkout);
 
-    const form = checkout.querySelector("#whatsappOrderForm");
-
-    form.addEventListener("submit", placeWhatsAppOrder);
+    checkout.querySelector("#whatsappOrderForm")
+      .addEventListener("submit", placeWhatsAppOrder);
   }
 
   checkout.style.display = hasItems ? "" : "none";
@@ -853,14 +789,12 @@ function placeWhatsAppOrder(event) {
     return;
   }
 
-  const itemsText = summary.lines.map((line, index) => {
-    return (
-      (index + 1) + ". " + line.product.name +
-      "\nPack: " + packLabel(line.grams) +
-      "\nQuantity: " + line.qty +
-      "\nPrice: " + rupees(line.subtotal)
-    );
-  }).join("\n\n");
+  const itemsText = summary.lines.map((line, index) =>
+    (index + 1) + ". " + line.product.name +
+    "\nPack: " + packLabel(line.grams) +
+    "\nQuantity: " + line.qty +
+    "\nPrice: " + rupees(line.subtotal)
+  ).join("\n\n");
 
   const message = [
     "Hello Suraj Kiran,",
@@ -886,9 +820,7 @@ function placeWhatsAppOrder(event) {
   window.location.href = url;
 }
 
-/* ==========================================
-   CLICK HANDLERS
-   ========================================== */
+/* CLICK HANDLERS */
 
 document.addEventListener("click", function (event) {
   const arrow = event.target.closest("[data-gallery-direction]");
@@ -896,11 +828,7 @@ document.addEventListener("click", function (event) {
   if (arrow) {
     event.preventDefault();
     event.stopPropagation();
-
-    moveGallery(
-      arrow,
-      Number(arrow.dataset.galleryDirection)
-    );
+    moveGallery(arrow, Number(arrow.dataset.galleryDirection));
     return;
   }
 
@@ -909,7 +837,6 @@ document.addEventListener("click", function (event) {
   if (dot) {
     event.preventDefault();
     event.stopPropagation();
-
     goToGalleryImage(dot, dot.dataset.galleryIndex);
     return;
   }
@@ -921,7 +848,6 @@ document.addEventListener("click", function (event) {
     event.stopPropagation();
 
     const product = getProduct(quickAdd.dataset.quickAdd);
-
     if (product) {
       add(product.id, defaultGrams(product), 1);
     }
@@ -970,19 +896,17 @@ document.addEventListener("click", function (event) {
     return;
   }
 
+  /* FIXED: CLICK ANYWHERE ON PRODUCT CARD OR IMAGE */
+
   const cardElement = event.target.closest(".product-card");
 
   if (cardElement && !event.target.closest("a, button")) {
-    if (event.target.closest(".product-slider")) return;
-
     window.location.href = "product.html?id=" +
       encodeURIComponent(cardElement.dataset.product);
   }
 });
 
-/* ==========================================
-   IMAGE DOT UPDATES
-   ========================================== */
+/* IMAGE DOT UPDATES */
 
 document.addEventListener("scroll", function (event) {
   if (event.target.matches &&
@@ -991,9 +915,7 @@ document.addEventListener("scroll", function (event) {
   }
 }, true);
 
-/* ==========================================
-   MOBILE NAVIGATION
-   ========================================== */
+/* MOBILE NAVIGATION */
 
 function setupNavigation() {
   const menuButton = document.getElementById("menuBtn");
@@ -1019,9 +941,7 @@ function setupNavigation() {
   }
 }
 
-/* ==========================================
-   INITIALISE WEBSITE
-   ========================================== */
+/* INITIALISE WEBSITE */
 
 function initialiseWebsite() {
   renderProducts();
