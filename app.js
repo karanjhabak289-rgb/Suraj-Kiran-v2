@@ -257,7 +257,8 @@ function galleryHtml(product, detail = false) {
 
   return `
     <div class="sk-gallery ${detail ? "sk-gallery-detail" : ""}">
-      <div class="product-slider" data-slider>
+      <div class="product-slider" data-slider
+     ${!detail ? `onclick="if(event.target.tagName === 'IMG') window.location.href='${productUrl(product)}'"` : ""}>
         ${images.map((image, index) => `
           <img
             src="${escapeHtml(image)}"
