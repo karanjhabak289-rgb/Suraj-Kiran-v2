@@ -138,12 +138,36 @@ function getProduct(id) {
   return PRODUCTS.find(p => p.id === id);
 }
 
-function imagesOf(product) {
+function imagesOf(product, grams) {
+  if (product.id === "premium-chai") {
+    const back = "premium_chai_back.png";
+
+    if (Number(grams) === 500) {
+      return [
+        "Suraj_Kiran_2x250g.png",
+        back,
+        "suraj_kiran_2x250g_disclaimer.jpg"
+      ];
+    }
+
+    if (Number(grams) === 1000) {
+      return [
+        "premium_chai_1kg.jpg",
+        back,
+        "premium_chai_1kg_disclaimer.jpg"
+      ];
+    }
+
+    return ["premium_chai_front.webp", back];
+  }
+
   return product.images || (product.image ? [product.image] : []);
 }
 
 function defaultGrams(product) {
-  return product.sizes ? 1000 : product.grams;
+  return product.sizes
+    ? (product.id === "premium-chai" ? 250 : 1000)
+    : product.grams;
 }
 
 function packLabel(grams) {
@@ -183,9 +207,11 @@ function saveCart(cart) {
 
 function cartGrams(item, product) {
   const grams = Number(item.grams);
+
   if (product.sizes) {
     return product.sizes.includes(grams) ? grams : 1000;
   }
+
   return product.grams;
 }
 
@@ -233,11 +259,13 @@ function showToast(message) {
   if (!toast) {
     toast = document.createElement("div");
     toast.id = "skToast";
+
     toast.style.cssText =
       "position:fixed;bottom:25px;left:50%;transform:translateX(-50%);" +
       "background:#123b2a;color:white;padding:13px 22px;z-index:9999;" +
       "font-family:Inter,sans-serif;font-size:14px;" +
       "box-shadow:0 8px 25px #0002;max-width:90%;text-align:center";
+
     document.body.appendChild(toast);
   }
 
@@ -252,13 +280,14 @@ function showToast(message) {
 
 /* PRODUCT IMAGE GALLERY */
 
-function galleryHtml(product, detail = false) {
-  const images = imagesOf(product);
+function galleryHtml(product, detail = false, grams = defaultGrams(product)) {
+  const images = imagesOf(product, grams);
 
   return `
     <div class="sk-gallery ${detail ? "sk-gallery-detail" : ""}">
       <div class="product-slider" data-slider
      ${!detail ? `onclick="if(event.target.tagName === 'IMG') window.location.href='${productUrl(product)}'"` : ""}>
+
         ${images.map((image, index) => `
           <img
             src="${escapeHtml(image)}"
@@ -267,6 +296,7 @@ function galleryHtml(product, detail = false) {
             draggable="false"
           >
         `).join("")}
+
       </div>
 
       ${images.length > 1 ? `
@@ -310,6 +340,7 @@ function moveGallery(button, direction) {
   if (!images.length || !slider.clientWidth) return;
 
   const current = Math.round(slider.scrollLeft / slider.clientWidth);
+
   const next = Math.max(
     0,
     Math.min(images.length - 1, current + direction)
@@ -455,7 +486,7 @@ function renderProductDetails() {
 
       <select id="detailPack" class="detail-select">
         ${product.sizes.map(grams => `
-          <option value="${grams}" ${grams === 1000 ? "selected" : ""}>
+          <option value="${grams}" ${grams === defaultGrams(product) ? "selected" : ""}>
             ${packLabel(grams)} — ${rupees(priceFor(product, grams))}
           </option>
         `).join("")}
@@ -486,7 +517,7 @@ function renderProductDetails() {
       </p>
 
       <div class="detail-price" id="detailPrice">
-        ${rupees(product.price)}
+        ${rupees(priceFor(product, defaultGrams(product)))}
       </div>
 
       <p class="detail-price-note">
@@ -542,7 +573,20 @@ function renderProductDetails() {
   if (pack) {
     pack.addEventListener("change", function () {
       const price = priceFor(product, Number(pack.value));
+
       document.getElementById("detailPrice").textContent = rupees(price);
+
+      if (product.id === "premium-chai") {
+        const galleryColumn = container.querySelector(".detail-gallery-column");
+
+        if (galleryColumn) {
+          galleryColumn.innerHTML = galleryHtml(
+            product,
+            true,
+            Number(pack.value)
+          );
+        }
+      }
     });
   }
 }
@@ -566,6 +610,7 @@ function changeCartQuantity(index, difference) {
 function removeCartItem(index) {
   const cart = getCart();
   cart.splice(index, 1);
+
   saveCart(cart);
   renderCart();
 }
@@ -584,7 +629,14 @@ function cartSummary() {
     const subtotal = unitPrice * qty;
 
     total += subtotal;
-    lines.push({ product, grams, qty, unitPrice, subtotal });
+
+    lines.push({
+      product,
+      grams,
+      qty,
+      unitPrice,
+      subtotal
+    });
   });
 
   return { lines, total };
@@ -620,7 +672,7 @@ function renderCart() {
         <div class="cart-item">
           <a class="thumb" href="${productUrl(product)}">
             <img
-              src="${escapeHtml(imagesOf(product)[0])}"
+              src="${escapeHtml(imagesOf(product, grams)[0])}"
               alt="${escapeHtml(product.name)}"
             >
           </a>
@@ -829,6 +881,7 @@ document.addEventListener("click", function (event) {
   if (arrow) {
     event.preventDefault();
     event.stopPropagation();
+
     moveGallery(arrow, Number(arrow.dataset.galleryDirection));
     return;
   }
@@ -838,6 +891,7 @@ document.addEventListener("click", function (event) {
   if (dot) {
     event.preventDefault();
     event.stopPropagation();
+
     goToGalleryImage(dot, dot.dataset.galleryIndex);
     return;
   }
@@ -849,9 +903,11 @@ document.addEventListener("click", function (event) {
     event.stopPropagation();
 
     const product = getProduct(quickAdd.dataset.quickAdd);
+
     if (product) {
       add(product.id, defaultGrams(product), 1);
     }
+
     return;
   }
 
@@ -897,7 +953,7 @@ document.addEventListener("click", function (event) {
     return;
   }
 
-  /* FIXED: CLICK ANYWHERE ON PRODUCT CARD OR IMAGE */
+  /* CLICK ANYWHERE ON PRODUCT CARD OR IMAGE */
 
   const cardElement = event.target.closest(".product-card");
 
